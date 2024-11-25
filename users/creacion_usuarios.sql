@@ -1,0 +1,4 @@
+ALTER SESSION SET "_ORACLE_SCRIPT" = TRUE;
+
+CREATE USER usuario_especifico IDENTIFIED BY "clave123456";
+GRANT DBA TO usuario_especifico;
