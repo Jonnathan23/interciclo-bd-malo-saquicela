@@ -1,4 +1,4 @@
-CREATE TABLE EMPLEADOS(
+CREATE TABLE EMPLEADOS (
     EMPLEADOID int NOT NULL,
     NOMBRE char(30) NULL,
     APELLIDO char(30) NULL,
@@ -10,7 +10,7 @@ CREATE TABLE EMPLEADOS(
 );
 
 
-CREATE TABLE PROVEEDORES(
+CREATE TABLE PROVEEDORES (
     PROVEEDORID int NOT NULL,
     NOMBREPROV char(50) NOT NULL,
     CONTACTO char(50) NOT NULL,
@@ -19,13 +19,14 @@ CREATE TABLE PROVEEDORES(
     CONSTRAINT PK_PROVEEDORES PRIMARY KEY (PROVEEDORID )
  );
  
- CREATE TABLE CATEGORIAS(
+CREATE TABLE CATEGORIAS (
     CATEGORIAID int NOT NULL,
     NOMBRECAT char(50) NOT NULL,
-    CONSTRAINT PK_CATEGORIAS PRIMARY KEY (CATEGORIAID)
+    CONSTRAINT PK_CATEGORIAS PRIMARY KEY
+    (CATEGORIAID)
 );
 
-CREATE TABLE CLIENTES(
+CREATE TABLE CLIENTES (
     CLIENTEID int NOT NULL,
     CEDULA_RUC char(10) NOT NULL,
     NOMBRECIA char(30) NOT NULL,
@@ -50,7 +51,7 @@ CREATE TABLE ORDENES(
     CONSTRAINT FK_ORDENES_EMPLE_ORD_EMPLEADO FOREIGN KEY (EMPLEADOID) REFERENCES EMPLEADOS(EMPLEADOID)
 );
 
-CREATE TABLE PRODUCTOS(
+CREATE TABLE PRODUCTOS (
     PRODUCTOID int NOT NULL,
     PROVEEDORID int NOT NULL,
     CATEGORIAID int NOT NULL,
@@ -67,11 +68,11 @@ CREATE TABLE DETALLE_ORDENES(
     DETALLEID int NOT NULL,
     PRODUCTOID int NOT NULL,
     CANTIDAD int NOT NULL,
-    CONSTRAINT PK_DETALLE_ORDENES PRIMARY KEY (ORDENID,DETALLEID ),
+    CONSTRAINT PK_DETALLE_ORDENES PRIMARY KEY (ORDENID,DETALLEID),
     CONSTRAINT FK_DETALLE__ORDEN_DET_ORDENES FOREIGN KEY (ORDENID) REFERENCES ORDENES(ORDENID),
     CONSTRAINT FK_DETALLE__PROD_DETA_PRODUCTO FOREIGN KEY (PRODUCTOID) REFERENCES PRODUCTOS(PRODUCTOID)
- );
-
+);
+ 
 
 ------* Tablas extras añadidas ------
 create table provincias (
@@ -137,22 +138,21 @@ create table DIM_ubicaciones (
     constraint FK_SDIM_PAISES_UBIC foreign key (paisid) references SDIM_paises (paisid)
 );
 
-----!
-    create table  TH_productos (
-        productoid int,
-        descripcion varchar2(50),
-        fechaid int,
-        proveedorid int,
-        clienteid int,
-        provinciaid int,
-        total_ventas number(7,2),
-        constraint FK_TH_DIM_TEM foreign key (fechaid) references dim_temporal (fechaid),
-        constraint FK_TH_DIM_PROV foreign key (proveedorid) references dim_proveedores (proveedorid),
-        constraint FK_TH_DIM_CLI foreign key (clienteid) references dim_clientes (clienteid),
-        constraint FK_TH_DIM_UBI foreign key (provinciaid) references dim_ubicaciones (provinciaid)
-    );
-----!
+create table  TH_productos (
+    productoid int,
+    descripcion varchar2(50),
+    fechaid int,
+    proveedorid int,
+    clienteid int,
+    provinciaid int,
+    total_ventas number(7,2),
+    constraint FK_TH_DIM_TEM foreign key (fechaid) references dim_temporal (fechaid),
+    constraint FK_TH_DIM_PROV foreign key (proveedorid) references dim_proveedores (proveedorid),
+    constraint FK_TH_DIM_CLI foreign key (clienteid) references dim_clientes (clienteid),
+    constraint FK_TH_DIM_UBI foreign key (provinciaid) references dim_ubicaciones (provinciaid)
+);
 
+COMMIT;
 -----------------------------------------------------------
 ---- Alterar tablas --------------
 alter table clientes 
