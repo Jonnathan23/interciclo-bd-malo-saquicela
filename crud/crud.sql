@@ -1,4 +1,9 @@
-------* Inserción de tuplas -------
+
+INSERT INTO metodo (metodoid, nombre) VALUES (1, 'Efectivo');
+INSERT INTO metodo (metodoid, nombre) VALUES (2, 'Transferencia');
+INSERT INTO metodo (metodoid, nombre) VALUES (3, 'Tarjeta de crédito');
+
+
 insert into paises values (1, 'Ecuador');
 
 insert into regiones values (1, 'R_Costa');
