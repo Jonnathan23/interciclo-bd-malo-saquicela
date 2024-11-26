@@ -29,7 +29,6 @@ end;
 ---- DIM_proveedores
 select proveedorid, nombreprov from proveedores;
 select * from dim_proveedores;
-rollback;
 
 declare 
     cursor prov_cur is
@@ -49,6 +48,8 @@ begin
     end loop;
     close prov_cur;
 end;
+
+COMMIT;
 
 ---- DIM_clientes
 select clienteid, nombrecontacto from clientes;
@@ -70,6 +71,8 @@ begin
     close cli_cur;
 end;
 
+
+COMMIT;
 ---- DIM_ubicaciones
 
 select paisid, nombrepais from paises;
@@ -123,40 +126,19 @@ end;
 
 
 ---- ETL Tabla de hechos
-
+--Borrar?
 select * from ordenes;
 select * from detalle_ordenes;
 SELECT * FROM clientes;
+SELECT * FROM proveedores;
 SELECT * FROM productos;
 select * from dim_temporal;
 select * from th_productos;
 
-select o.clienteid,sum(do.cantidad)
-from detalle_ordenes do, ordenes o
-where o.ordenid = do.ordenid
-and clienteid = 14011
-Group by o.clienteid;
 
 
-Select clienteid
-From Clientes
-Where nombrecontacto LIKE
-('Manuel P�rez');
 
-select proveedorid, descripcion 
-from productos
-where productoid = 1203
-;
-
-select *
-from dim_temporal
-where fechaid = 320;
-
-select provinciaid
-from clientes
-where clienteid = 17017;
-
-
+---- th_productos
 declare 
     cursor ids_cur is
         (select o.clienteid, o.fechaorden, do.productoid, do.cantidad
@@ -204,3 +186,16 @@ end;
 commit;
 
 Select * From th_productos;
+
+
+SELECT clienteid, NOMBRECIA, total_productos
+FROM (
+    SELECT o.clienteid, c.NOMBRECIA, SUM(do.cantidad) AS total_productos
+    FROM detalle_ordenes do, ordenes o, CLIENTES c
+    WHERE o.ordenid = do.ordenid AND c.CLIENTEID = o.clienteid
+    GROUP BY o.clienteid, c.NOMBRECIA
+    ORDER BY total_productos DESC
+) 
+WHERE ROWNUM = 1;
+
+COMMIT;
