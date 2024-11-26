@@ -12,7 +12,6 @@ begin
     loop
         fetch fechas_cur into f_value;
         exit when fechas_cur%NOTFOUND;
---        DBMS_OUTPUT.PUT_LINE('index: ' || pointer || ' fecha: ' || f_value);
         insert into DIM_temporal values (pointer, f_value);
         pointer := pointer + 1;
     end loop;
@@ -34,7 +33,6 @@ begin
     loop
         fetch prov_cur into  p_id, n_prov;
         exit when prov_cur%NOTFOUND;
---        DBMS_OUTPUT.PUT_LINE('index: ' || p_id || ' nombre: ' || n_prov);
         insert into dim_proveedores values (p_id, n_prov);
     end loop;
     close prov_cur;

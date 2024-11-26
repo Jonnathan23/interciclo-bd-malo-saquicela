@@ -87,11 +87,9 @@ create table  TH_productos (
 -----------------------------------------------------------
 ---- Modificacion de la tabla Clientes --------------
 alter table clientes 
-add
-provinciaid int ;   
+add provinciaid int;   
 
-alter table clientes
-add 
+alter table clientes add 
 constraint FK_PROVINCIAS_CLIENTES foreign key (provinciaid) references provincias (provinciaid);
 
 ALTER TABLE clientes 
