@@ -153,8 +153,8 @@ create table  TH_productos (
 );
 
 COMMIT;
------------------------------------------------------------
----- Alterar tablas --------------
+---------------------| Alterar tablas |--------------------------------------
+------- Clientes -----------
 alter table clientes 
 add
 provinciaid int ;   
@@ -164,3 +164,12 @@ add
 constraint FK_PROVINCIAS_CLIENTES foreign key (provinciaid) references provincias (provinciaid);
 
 set SERVEROUTPUT on;
+
+------ Proveedores ------
+alter table proveedores 
+add
+provinciaid int ;   
+
+alter table proveedores
+add 
+constraint FK_PROVINCIAS_PROVEEDORES foreign key (provinciaid) references provincias (provinciaid);

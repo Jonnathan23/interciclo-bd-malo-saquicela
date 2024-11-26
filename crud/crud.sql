@@ -165,3 +165,36 @@ BEGIN
      
      CLOSE clientes_cur;
 END;
+
+
+--- Llenado de la tabla clientes con provincias usando cursores
+
+DECLARE
+    CURSOR clientes_cur IS
+        SELECT clienteid FROM clientes;
+    
+    c_id clientes.clienteid%TYPE;
+    pointer number := 1;
+    
+BEGIN
+
+    OPEN clientes_cur;
+    
+    LOOP
+        FETCH clientes_cur INTO c_id;
+    
+        EXIT WHEN clientes_cur%NOTFOUND;
+        
+        if pointer < 20 then 
+            pointer := pointer + 1;
+        else
+            pointer := 1;
+        end if;
+        update clientes
+        set provinciaid = pointer
+        where clienteid = c_id;
+        
+     END LOOP;
+     
+     CLOSE clientes_cur;
+END;
