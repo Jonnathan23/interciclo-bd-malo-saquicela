@@ -74,15 +74,6 @@ CREATE TABLE DETALLE_ORDENES(
 
 
 ------* Tablas extras añadidas ------
-create table provincias (
-    provinciaid int not null,
-    nombreprovincia varchar2(50) not null,
-    regionid int not null,
-    paisid int not null,
-    constraint PK_PROVINCIAS primary key (provinciaid),
-    constraint FK_PROVINCIAS_REGIONES foreign key (regionid) references regiones (regionid),
-    constraint FK_PROVINCIAS_PAISES foreign key (paisid) references paises (paisid)
-);
 
 create table regiones (
     regionid int not null,
@@ -94,6 +85,16 @@ create table paises (
     paisid int not null,
     nombrepais varchar2(50) not null,
     constraint PK_PAISES primary key (paisid)
+);
+
+create table provincias (
+    provinciaid int not null,
+    nombreprovincia varchar2(50) not null,
+    regionid int not null,
+    paisid int not null,
+    constraint PK_PROVINCIAS primary key (provinciaid),
+    constraint FK_PROVINCIAS_REGIONES foreign key (regionid) references regiones (regionid),
+    constraint FK_PROVINCIAS_PAISES foreign key (paisid) references paises (paisid)
 );
 
 create table DIM_temporal(
@@ -164,3 +165,14 @@ add
 constraint FK_PROVINCIAS_CLIENTES foreign key (provinciaid) references provincias (provinciaid);
 
 set SERVEROUTPUT on;
+
+-- Modificaciin de la tabla proveedores
+SELECT * FROM proveedores;
+
+alter table proveedores 
+add
+provinciaid int ;   
+
+alter table proveedores
+add 
+constraint FK_PROVINCIAS_PROVEEDORES foreign key (provinciaid) references provincias (provinciaid);
