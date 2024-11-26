@@ -1,4 +1,4 @@
----- DIM temporal
+---- DIM tiempo
 declare
     cursor fechas_cur is 
             select distinct(fechaorden) from ordenes;
