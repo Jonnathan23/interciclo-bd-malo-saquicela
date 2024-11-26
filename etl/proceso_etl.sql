@@ -1,11 +1,4 @@
----- Proceso de ETL Dimensiones ----
-
 ---- DIM temporal
-select distinct(fechaorden) from ordenes;
-select * from DIM_temporal;
-
-set SERVEROUTPUT on;
-
 declare
     cursor fechas_cur is 
             select distinct(fechaorden) from ordenes;
@@ -25,11 +18,9 @@ begin
     end loop;
     close fechas_cur;
 end;
+COMMIT;
 
 ---- DIM_proveedores
-select proveedorid, nombreprov from proveedores;
-select * from dim_proveedores;
-
 declare 
     cursor prov_cur is
         select proveedorid, nombreprov from proveedores;
@@ -48,13 +39,9 @@ begin
     end loop;
     close prov_cur;
 end;
-
 COMMIT;
 
 ---- DIM_clientes
-select clienteid, nombrecontacto from clientes;
-select * from dim_clientes;
-
 declare 
     cursor cli_cur is
         select clienteid, nombrecontacto from clientes;
@@ -70,18 +57,9 @@ begin
     end loop;
     close cli_cur;
 end;
-
-
 COMMIT;
+
 ---- DIM_ubicaciones
-
-select paisid, nombrepais from paises;
-select regionid, nombreregion from regiones;
-select * from provincias;
-SELECT * FROM sdim_paises;
-SELECT * FROM sdim_regiones;
-SELECT * FROM dim_ubicaciones;
-
 declare 
     cursor r_cur is 
         select regionid, nombreregion from regiones;
@@ -123,20 +101,7 @@ begin
     end loop;
     close prov_cur;
 end;
-
-
----- ETL Tabla de hechos
---Borrar?
-select * from ordenes;
-select * from detalle_ordenes;
-SELECT * FROM clientes;
-SELECT * FROM proveedores;
-SELECT * FROM productos;
-select * from dim_temporal;
-select * from th_productos;
-
-
-
+COMMIT;
 
 ---- th_productos
 declare 
@@ -185,9 +150,7 @@ begin
 end;
 commit;
 
-Select * From th_productos;
-
-
+--Comprobacion
 SELECT clienteid, NOMBRECIA, total_productos
 FROM (
     SELECT o.clienteid, c.NOMBRECIA, SUM(do.cantidad) AS total_productos
@@ -198,4 +161,14 @@ FROM (
 ) 
 WHERE ROWNUM = 1;
 
-COMMIT;
+
+SELECT proveedorid, nombreprov, total_productos
+FROM (
+    SELECT p.proveedorid, pr.nombreprov, SUM(do.cantidad) AS total_productos
+    FROM detalle_ordenes do
+    JOIN productos p ON do.productoid = p.productoid
+    JOIN proveedores pr ON p.proveedorid = pr.proveedorid
+    GROUP BY p.proveedorid, pr.nombreprov
+    ORDER BY total_productos DESC
+) 
+WHERE ROWNUM = 1;
