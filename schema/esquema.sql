@@ -83,7 +83,7 @@ create table  TH_productos (
     constraint FK_TH_DIM_UBI foreign key (provinciaid) references dim_ubicaciones (provinciaid)
 );
 
-
+commit;
 -----------------------------------------------------------
 ---- Modificacion de la tabla Clientes --------------
 alter table clientes 
@@ -116,3 +116,39 @@ ALTER TABLE proveedores
 ADD CONSTRAINT FK_METODO_PROVEEDORES FOREIGN KEY (metodoid) REFERENCES metodo (metodoid);
 
 COMMIT;
+
+DESCRIBE proveedores;
+
+
+select proveedorid FROM proveedores WHERE NOMBREPROV = 'Abbott, MacGyver and Kemmer';
+
+select NOMBREPROV from PROVEEDORES where proveedorid = 11007;
+
+select * from proveedores where proveedorid = 11007;
+
+UPDATE proveedores
+SET provinciaid = 24
+WHERE PROVEEDORID = 11007;
+
+commit;
+
+select * from provincias;
+
+
+
+-- Tablas DIM dependientes
+DROP TABLE TH_productos CASCADE CONSTRAINTS; -- Primero elimina la tabla de hechos ya que depende de DIM
+
+-- Tablas DIM relacionadas
+DROP TABLE DIM_ubicaciones CASCADE CONSTRAINTS;
+DROP TABLE DIM_proveedores CASCADE CONSTRAINTS;
+DROP TABLE DIM_clientes CASCADE CONSTRAINTS;
+DROP TABLE DIM_temporal CASCADE CONSTRAINTS;
+
+
+DROP TABLE SDIM_paises CASCADE CONSTRAINTS;
+DROP TABLE SDIM_regiones CASCADE CONSTRAINTS;
+
+
+COMMIT;
+
