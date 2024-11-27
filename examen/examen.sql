@@ -397,14 +397,12 @@ ORDER BY
 
 
 ------------------------------------------`
-
-
 SELECT 
     Proveedor,
     Producto,
-    A帽o,
+    Anio,
     Mes,
-    D铆a,
+    Dia,
     Pais,
     Region,
     Provincia,
@@ -413,11 +411,11 @@ FROM (
     SELECT 
         dp.nombreprov AS Proveedor,                  -- Proveedor
         tp.descripcion AS Producto,                 -- Producto
-        TO_CHAR(dt.fechaorden, 'YYYY') AS A帽o,      -- A帽o
+        TO_CHAR(dt.fechaorden, 'YYYY') AS Anio,      -- Anio
         TO_CHAR(dt.fechaorden, 'MM') AS Mes,        -- Mes
-        TO_CHAR(dt.fechaorden, 'DD') AS D铆a,        -- D铆a
-        sp.nombreregion AS Pais,                    -- Pa铆s
-        sr.nombreregion AS Region,                  -- Regi贸n
+        TO_CHAR(dt.fechaorden, 'DD') AS Dia,        -- Dia
+        sp.nombreregion AS Pais,                    -- Pais
+        sr.nombreregion AS Region,                  -- Region
         du.nombreprovincia AS Provincia,            -- Provincia
         SUM(tp.total_ventas) AS Total_Ventas,       -- Total de ventas
         RANK() OVER (
@@ -431,11 +429,11 @@ FROM (
             ORDER BY SUM(tp.total_ventas) DESC
         ) AS Rango -- Clasifica los productos por ventas
     FROM TH_PRODUCTOS tp
-    JOIN DIM_proveedores dp ON tp.proveedorid = dp.proveedorid     -- Relaci贸n con proveedores
-    JOIN DIM_temporal dt ON tp.fechaid = dt.fechaid               -- Relaci贸n con temporal
-    JOIN DIM_ubicaciones du ON tp.provinciaid = du.provinciaid    -- Relaci贸n con ubicaciones
-    JOIN SDIM_regiones sr ON du.regionid = sr.regionid            -- Relaci贸n con regiones
-    JOIN SDIM_paises sp ON du.paisid = sp.paisid                  -- Relaci贸n con pa铆ses
+    JOIN DIM_proveedores dp ON tp.proveedorid = dp.proveedorid     -- Relacion con proveedores
+    JOIN DIM_temporal dt ON tp.fechaid = dt.fechaid               -- Relacion con temporal
+    JOIN DIM_ubicaciones du ON tp.provinciaid = du.provinciaid    -- Relacion con ubicaciones
+    JOIN SDIM_regiones sr ON du.regionid = sr.regionid            -- Relacion con regiones
+    JOIN SDIM_paises sp ON du.paisid = sp.paisid                  -- Relacion con paises
     GROUP BY 
         dp.nombreprov, 
         tp.descripcion, 
@@ -446,6 +444,107 @@ FROM (
         sr.nombreregion, 
         du.nombreprovincia
 )
-WHERE Rango = 1 and Pais = 'Palaos'-- Filtra solo el producto m谩s vendido en cada combinaci贸n
+WHERE Rango = 1 and Pais = 'Palaos'-- Filtra solo el producto mas vendido en cada combinacion
 ORDER BY 
-    Proveedor, A帽o, Mes, D铆a, Pais, Region, Provincia, Total_Ventas;
+    Proveedor, Anio, Mes, Dia, Pais, Region, Provincia, Total_Ventas;
+
+
+----------------------------------
+
+
+SELECT 
+    Proveedor,
+    Producto,
+    Anio,
+    Mes,
+    Pais,
+    Region,
+    Provincia,
+    Total_Ventas
+FROM (
+    SELECT 
+        dp.nombreprov AS Proveedor,                  -- Proveedor
+        tp.descripcion AS Producto,                 -- Producto
+        TO_CHAR(dt.fechaorden, 'YYYY') AS Anio,     -- A駉
+        TO_CHAR(dt.fechaorden, 'MM') AS Mes,        -- Mes
+        TO_CHAR(dt.fechaorden, 'DD') AS Dia,        -- D韆
+        sp.nombreregion AS Pais,                    -- Pa韘
+        sr.nombreregion AS Region,                  -- Regi髇
+        du.nombreprovincia AS Provincia,            -- Provincia
+        SUM(tp.total_ventas) AS Total_Ventas,       -- Total de ventas
+        RANK() OVER (
+            PARTITION BY TO_CHAR(dt.fechaorden, 'YYYY'), 
+                         TO_CHAR(dt.fechaorden, 'MM'), 
+                         TO_CHAR(dt.fechaorden, 'DD'), 
+                         sp.nombreregion, 
+                         sr.nombreregion, 
+                         du.nombreprovincia 
+            ORDER BY SUM(tp.total_ventas) DESC
+        ) AS Rango -- Clasifica los productos por ventas
+    FROM TH_PRODUCTOS tp
+    JOIN DIM_proveedores dp ON tp.proveedorid = dp.proveedorid     -- Relaci髇 con proveedores
+    JOIN DIM_temporal dt ON tp.fechaid = dt.fechaid               -- Relaci髇 con temporal
+    JOIN DIM_ubicaciones du ON tp.provinciaid = du.provinciaid    -- Relaci髇 con ubicaciones
+    JOIN SDIM_regiones sr ON du.regionid = sr.regionid            -- Relaci髇 con regiones
+    JOIN SDIM_paises sp ON du.paisid = sp.paisid                  -- Relaci髇 con pa韘es
+    GROUP BY 
+        dp.nombreprov, 
+        tp.descripcion, 
+        TO_CHAR(dt.fechaorden, 'YYYY'), 
+        TO_CHAR(dt.fechaorden, 'MM'), 
+        TO_CHAR(dt.fechaorden, 'DD'), 
+        sp.nombreregion, 
+        sr.nombreregion, 
+        du.nombreprovincia
+)
+WHERE Rango = 1  and Pais = 'Palaos'-- Filtra solo el producto m醩 vendido en cada combinaci髇
+ORDER BY 
+    Proveedor, Anio, Mes, Dia, Pais, Region, Provincia, Total_Ventas DESC;
+
+
+-------------------------------
+
+SELECT 
+    Proveedor,
+    Anio,
+    Mes,
+    Region,
+    Provincia,
+    Total_Productos
+FROM (
+    SELECT 
+        dp.nombreprov AS Proveedor,               -- Proveedor
+        TO_CHAR(dt.fechaorden, 'YYYY') AS Anio,  -- A駉
+        TO_CHAR(dt.fechaorden, 'MM') AS Mes,     -- Mes
+        sr.nombreregion AS Region,               -- Regi髇
+        du.nombreprovincia AS Provincia,         -- Provincia
+        COUNT(tp.descripcion) AS Total_Productos, -- Total de productos vendidos
+        RANK() OVER (
+            PARTITION BY TO_CHAR(dt.fechaorden, 'YYYY'), 
+                         TO_CHAR(dt.fechaorden, 'MM'), 
+                         sr.nombreregion, 
+                         du.nombreprovincia
+            ORDER BY COUNT(tp.descripcion) DESC
+        ) AS Rango -- Clasifica a los proveedores por n鷐ero de productos vendidos
+    FROM TH_PRODUCTOS tp
+    JOIN DIM_proveedores dp ON tp.proveedorid = dp.proveedorid      -- Relaci髇 con proveedores
+    JOIN DIM_temporal dt ON tp.fechaid = dt.fechaid                -- Relaci髇 con temporal
+    JOIN DIM_ubicaciones du ON tp.provinciaid = du.provinciaid     -- Relaci髇 con ubicaciones
+    JOIN SDIM_regiones sr ON du.regionid = sr.regionid             -- Relaci髇 con regiones
+    GROUP BY 
+        dp.nombreprov, 
+        TO_CHAR(dt.fechaorden, 'YYYY'), 
+        TO_CHAR(dt.fechaorden, 'MM'), 
+        sr.nombreregion, 
+        du.nombreprovincia
+)
+WHERE Rango = 1 -- Filtra solo el proveedor con el mayor n鷐ero de productos en cada combinaci髇
+ORDER BY 
+    Anio, Mes, Region, Provincia, Total_Productos DESC;
+
+
+
+
+
+
+
